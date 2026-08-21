@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=MusicApp
+Comment=Reproductor multimedia con letras sincronizadas
+Exec=MusicApp
+Icon=musicapp
+Terminal=false
+Type=Application
+Categories=AudioVideo;Audio;Player;
