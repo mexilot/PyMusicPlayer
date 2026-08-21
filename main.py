@@ -3,33 +3,39 @@ import dbus.mainloop.glib
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtCore import QUrl
+from PySide6.QtCore import QUrl, Slot
 
 from player import Player
 
+dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-dbus.mainloop.glib.DBusGMainLoop(
-    set_as_default=True
-)
+class MusicApp(QApplication):
+    def __init__(self, argv):
+        super().__init__(argv)
 
-app = QApplication(sys.argv)
+        self.engine = QQmlApplicationEngine()
+        self.player = Player()
 
-engine = QQmlApplicationEngine()
+        self.engine.rootContext().setContextProperty("player", self.player)
+        self.engine.rootContext().setContextProperty("windowController", self)
 
-player = Player()
+        self.engine.load(QUrl.fromLocalFile("/home/arturofs/MusicApp/main.qml"))
 
-engine.rootContext().setContextProperty(
-    "player",
-    player
-)
+        if not self.engine.rootObjects():
+            sys.exit(1)
 
-engine.load(
-    QUrl.fromLocalFile(
-        "main.qml"
-    )
-)
+    @Slot()
+    def startMove(self):
+        windows = self.engine.rootObjects()
+        if not windows:
+            return
 
-if not engine.rootObjects():
-    sys.exit(1)
+        window = windows[0]
 
+        try:
+            window.startSystemMove()
+        except Exception as e:
+            print("No se pudo iniciar el movimiento de ventana:", e)
+
+app = MusicApp(sys.argv)
 sys.exit(app.exec())
