@@ -483,25 +483,18 @@ ApplicationWindow {
     MouseArea {
         id: dragArea
 
-        z: 100
+        z: 1000
 
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
 
-        height: 30
+        height: 35
 
-        property point clickPos
+        acceptedButtons: Qt.LeftButton
 
-        onPressed: function(mouse) {
-            clickPos = Qt.point(mouse.x, mouse.y)
-        }
-
-        onPositionChanged: function(mouse) {
-            if (pressed) {
-                app.x += mouse.x - clickPos.x
-                app.y += mouse.y - clickPos.y
-            }
+        onPressed: {
+            windowController.startMove()
         }
     }
 
